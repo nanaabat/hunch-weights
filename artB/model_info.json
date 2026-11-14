@@ -1,0 +1,1 @@
+{"model_type": "vit_b_32", "class_to_idx": {"art_anxiety": 0, "art_calm": 1}, "training_loss": 0.07022480269273122, "training_accuracy": 0.9839506172839506}
