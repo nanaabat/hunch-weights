@@ -32,6 +32,42 @@ python install.py
 
 The CLI uses that cached head by default when it is present.
 
+Box test, 6:44 PM America/New_York on Saturday 14 Nov 2026: the zip was unpacked and `install.py` was pointed at a venv that already had the Python packages, so pip reported them already satisfied. The weights fetch itself ran against this release, wrote the files to a clean cache (`HUNCH_WEIGHTS_DIR` for the test; on a normal install that folder is `~/.hunch/weights/extB`), and checked sha256:
+
+```
+fetching trained atmosphere weights (sha256 checked, resumable):
+fetching SHA256SUMS from https://github.com/nanaabat/hunch-weights/releases/download/v0.3-weights
+weights extB: exterior architecture atmosphere (default)
+  model_info.json 100% (176 / 176 bytes)
+  model_info.json sha256 ok
+  model_weights.pth 0% (1048576 / 349888771 bytes)
+  model_weights.pth 5% (17825792 / 349888771 bytes)
+  model_weights.pth 10% (35651584 / 349888771 bytes)
+  model_weights.pth 15% (53477376 / 349888771 bytes)
+  model_weights.pth 20% (70254592 / 349888771 bytes)
+  model_weights.pth 25% (88080384 / 349888771 bytes)
+  model_weights.pth 30% (105906176 / 349888771 bytes)
+  model_weights.pth 35% (122683392 / 349888771 bytes)
+  model_weights.pth 40% (140509184 / 349888771 bytes)
+  model_weights.pth 45% (158334976 / 349888771 bytes)
+  model_weights.pth 50% (175112192 / 349888771 bytes)
+  model_weights.pth 55% (192937984 / 349888771 bytes)
+  model_weights.pth 60% (210763776 / 349888771 bytes)
+  model_weights.pth 65% (227540992 / 349888771 bytes)
+  model_weights.pth 70% (245366784 / 349888771 bytes)
+  model_weights.pth 75% (263192576 / 349888771 bytes)
+  model_weights.pth 80% (279969792 / 349888771 bytes)
+  model_weights.pth 85% (297795584 / 349888771 bytes)
+  model_weights.pth 90% (315621376 / 349888771 bytes)
+  model_weights.pth 95% (332398592 / 349888771 bytes)
+  model_weights.pth 100% (349888771 / 349888771 bytes)
+  model_weights.pth sha256 ok
+trained head ready at /workspace/hunch-test/v2/weights/e2e-cache/extB
+the CLI uses this head by default when it is present.
+```
+
+The fetched `model_weights.pth` was 349,888,771 bytes, a real PyTorch zip (not an HTML page), sha256 `cdb3c527acaa6a432a6b63f7325edb57d37d1f0084ecfde539398ba39b54a44f`.
+
 ## 3. Manual download (if you skip install.py's fetch)
 
 ```bash
@@ -58,22 +94,22 @@ From the unzipped `hunch` folder, with the environment active:
 python hunch.py samples/hunch-house.3dm --site Boston --orient 90 --person 2.5,0,2.5 --target calm
 ```
 
-Box test, 6:39 PM America/New_York on Saturday 14 Nov 2026, using the extB head (349,888,771 bytes, sha256 `cdb3c527acaa6a432a6b63f7325edb57d37d1f0084ecfde539398ba39b54a44f`). The command above is the one to copy. This run passed `--model` at the local extB folder; after `install.py` the same command uses `~/.hunch/weights/extB` and prints that path instead.
+Box test, 6:44 PM America/New_York on Saturday 14 Nov 2026, after the install above, from the unzipped zip, with no `--model` flag. The command used the fetched extB head in the test cache (on a normal install the printed path is `~/.hunch/weights/extB`). The command above is the one to copy.
 
 ```
 site: Boston, Massachusetts, United States (42.3584, -71.0598)
 climate cached: 2024 hourly weather, comfort hours 10% (simple outdoor band, experimental)
 person viewpoint in kitchen: enclosure 39.2, prospect 11.4, view out=True
-using trained atmosphere head: /workspace/hunch-test/studio-src/extB
-rendering views of samples/hunch-house.3dm into /workspace/hunch-test/v2/weights/cli/renders
-reading /workspace/hunch-test/v2/weights/cli/renders/hunch-house_front.png
-reading /workspace/hunch-test/v2/weights/cli/renders/hunch-house_three-quarter.png
-reading /workspace/hunch-test/v2/weights/cli/renders/hunch-house_elevated.png
+using trained atmosphere head: /workspace/hunch-test/v2/weights/e2e-cache/extB
+rendering views of samples/hunch-house.3dm into /workspace/hunch-test/v2/weights/e2e/cli/renders
+reading /workspace/hunch-test/v2/weights/e2e/cli/renders/hunch-house_front.png
+reading /workspace/hunch-test/v2/weights/e2e/cli/renders/hunch-house_three-quarter.png
+reading /workspace/hunch-test/v2/weights/e2e/cli/renders/hunch-house_elevated.png
   kitchen: cozy because: timber/warm materials 95%, warm surface colour 62, 18 C est, modest facade sun
   loft: calm because: mid surface value 91, even daylight 0, 18 C, material warmth 48
   stair: open because: window-to-wall 8%, ceiling 5.20 m, prospect 8
 top suggestion toward calm: use lighter plaster surfaces (toward calm: 24 to 31 (+7.1). comfort hours 8% to 8% (+0.0 points). predicted feel: calm.)
-report written: /workspace/hunch-test/v2/weights/cli/report.html /workspace/hunch-test/v2/weights/cli/report.json
+report written: /workspace/hunch-test/v2/weights/e2e/cli/report.html /workspace/hunch-test/v2/weights/e2e/cli/report.json
 this building tends to feel open in 1 of 3 rooms. kitchen: cozy (cozy because: timber/warm materials 95%, warm surface colour 62, 18 C est, modest facade sun) loft: calm (calm because: mid surface value 91, even daylight 0, 18 C, material warmth 48) stair: open (open because: window-to-wall 8%, ceiling 5.20 m, prospect 8)
 predicts how this space tends to feel, from building features (geometry, materials, colour, daylight, temperature) and, if present, a rendered view. experimental. it does not read a real person's emotions.
 ```
